@@ -1,0 +1,88 @@
+package com.example.authservice.controller;
+
+import com.example.authservice.dto.AuthRequest;
+import com.example.authservice.dto.AuthResponse;
+import com.example.authservice.dto.RegisterRequest;
+import com.example.authservice.service.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import com.example.authservice.dto.UserRoleUpdateRequest;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import com.example.authservice.dto.UserResponse;
+import org.springframework.web.bind.annotation.GetMapping;
+import java.util.List;
+
+
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+@Slf4j
+public class AuthController {
+
+    private final UserService userService;
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(
+            @RequestBody @Valid RegisterRequest request
+    ) {
+        log.info("Хэрэглэгч бүртгэх хүсэлт: {}", request.getSisiId());
+        return ResponseEntity.ok(userService.register(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(
+            @RequestBody @Valid AuthRequest request
+    ) {
+        log.info("Хэрэглэгч нэвтрэх хүсэлт: {}", request.getSisiId());
+        return ResponseEntity.ok(userService.login(request));
+    }
+    
+    // role role role role role role role role role role 
+    // role role role role role role role role role role 
+    // role role role role role role role role role role 
+    @PutMapping("/add-role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<AuthResponse> addUserRole(
+            @RequestParam String sisiId, 
+            @RequestParam String role
+    ) {
+        log.info("Хэрэглэгчид {} роль нэмэх хүсэлт: {}", role, sisiId);
+        return ResponseEntity.ok(userService.addUserRole(sisiId, role));
+    }
+
+    @PutMapping("/remove-role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<AuthResponse> removeUserRole(
+            @RequestParam String sisiId, 
+            @RequestParam String role
+    ) {
+        log.info("Хэрэглэгчээс {} роль хасах хүсэлт: {}", role, sisiId);
+        return ResponseEntity.ok(userService.removeUserRole(sisiId, role));
+    }
+
+    @PutMapping("/update-roles")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<AuthResponse> updateUserRoles(
+            @RequestBody @Valid UserRoleUpdateRequest request
+    ) {
+        log.info("Хэрэглэгчийн бүх роль шинэчлэх хүсэлт: {}", request.getSisiId());
+        return ResponseEntity.ok(userService.updateUserRoles(request));
+    }
+
+    // --- New Endpoint to get all users --- 
+    @GetMapping("/users")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        log.info("Бүх хэрэглэгчдийг авах хүсэлт (Админ)");
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+    // --- End of New Endpoint ---
+} 

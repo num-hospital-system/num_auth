@@ -1,0 +1,26 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: auth-service
+  main:
+    allow-circular-references: true
+  cloud:
+    compatibility-verifier:
+      enabled: false
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: auth_service_db
+
+eureka:
+  client:
+    enabled: false
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+jwt:
+  secret: YW5kMTIzNDU2Nzg5MGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6MTIzNDU2Nzg5MA==
+  expiration: 86400000 # 24 цаг 
