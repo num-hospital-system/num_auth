@@ -109,7 +109,7 @@ graph LR
                 .path("/api/patients/**")  // Gateway дээрх зам
                 .filters(f -> f
                         .stripPrefix(1)   // /api-г хасна
-                        // Хэрэв認証 шаардлагатай бол JWT филтерийг нэмнэ
+                        //JWT филтерийг нэмнэ
                         .filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config()))
                 )
                 .uri("http://localhost:8083")) // Шинэ сервисийн хаяг (Port зөв эсэхийг шалгаарай)
