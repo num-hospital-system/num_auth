@@ -54,7 +54,7 @@ public class RolePermissionController {
     }
 
     @GetMapping("/role/{role}/active")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<List<RolePermissionResponse>> getActivePermissionsByRole(@PathVariable String role) {
         log.info("Ролийн идэвхтэй зөвшөөрлүүдийг харах хүсэлт: Роль {}", role);
         return ResponseEntity.ok(rolePermissionService.getActivePermissionsByRole(role));

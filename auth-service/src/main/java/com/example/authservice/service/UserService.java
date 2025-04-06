@@ -199,4 +199,13 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
+    public void deleteUser(String userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("Хэрэглэгч олдсонгүй: " + userId));
+
+        // Хэрэглэгчийг устгах
+        userRepository.delete(user);
+        log.info("Хэрэглэгч амжилттай устгагдлаа: {}", userId);
+    }
+
 } 

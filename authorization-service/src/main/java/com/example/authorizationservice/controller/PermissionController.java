@@ -22,7 +22,7 @@ public class PermissionController {
     private final PermissionService permissionService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Permission> createPermission(@Valid @RequestBody PermissionRequest request) {
         log.info("Зөвшөөрөл үүсгэх хүсэлт хүлээн авлаа: {}", request.getName());
         Permission createdPermission = permissionService.createPermission(request);
@@ -30,7 +30,7 @@ public class PermissionController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Permission> updatePermission(
             @PathVariable String id,
             @Valid @RequestBody PermissionRequest request
@@ -41,7 +41,7 @@ public class PermissionController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletePermission(@PathVariable String id) {
         log.info("Зөвшөөрөл устгах хүсэлт хүлээн авлаа. ID: {}", id);
         permissionService.deletePermission(id);
@@ -49,7 +49,7 @@ public class PermissionController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<Permission> getPermissionById(@PathVariable String id) {
         log.info("Зөвшөөрөл харах хүсэлт хүлээн авлаа. ID: {}", id);
         Permission permission = permissionService.getPermissionById(id);
@@ -57,7 +57,7 @@ public class PermissionController {
     }
 
     @GetMapping("/name/{name}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<Permission> getPermissionByName(@PathVariable String name) {
         log.info("Зөвшөөрөл харах хүсэлт хүлээн авлаа. Нэр: {}", name);
         Permission permission = permissionService.getPermissionByName(name);
@@ -65,7 +65,7 @@ public class PermissionController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<List<Permission>> getAllPermissions() {
         log.info("Бүх зөвшөөрлүүдийг харах хүсэлт хүлээн авлаа");
         List<Permission> permissions = permissionService.getAllPermissions();

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.example.authservice.dto.UserResponse;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 
@@ -49,7 +51,7 @@ public class AuthController {
     // role role role role role role role role role role 
     // role role role role role role role role role role 
     @PutMapping("/add-role")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<AuthResponse> addUserRole(
             @RequestParam String sisiId, 
             @RequestParam String role
@@ -59,7 +61,7 @@ public class AuthController {
     }
 
     @PutMapping("/remove-role")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<AuthResponse> removeUserRole(
             @RequestParam String sisiId, 
             @RequestParam String role
@@ -69,7 +71,7 @@ public class AuthController {
     }
 
     @PutMapping("/update-roles")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<AuthResponse> updateUserRoles(
             @RequestBody @Valid UserRoleUpdateRequest request
     ) {
@@ -79,10 +81,19 @@ public class AuthController {
 
     // --- New Endpoint to get all users --- 
     @GetMapping("/users")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         log.info("Бүх хэрэглэгчдийг авах хүсэлт (Админ)");
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    // Хэрэглэгч устгах endpoint
+    @DeleteMapping("/users/{userId}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
+        log.info("Хэрэглэгч устгах хүсэлт (Админ): {}", userId);
+        userService.deleteUser(userId);
+        return ResponseEntity.ok().build();
     }
     // --- End of New Endpoint ---
 } 
