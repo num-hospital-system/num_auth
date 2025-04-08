@@ -126,7 +126,7 @@ public class PermissionService {
         log.info("{} ролийн идэвхтэй зөвшөөрлүүдийг авч байна", role);
         List<RolePermission> rolePermissions = rolePermissionRepository.findByRoleAndIsActiveTrue(role);
         return rolePermissions.stream()
-                .map(this::mapToRolePermissionResponse)
+                .<RolePermissionResponse>map(this::mapToRolePermissionResponse)
                 .collect(Collectors.toList());
     }
 

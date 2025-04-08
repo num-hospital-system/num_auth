@@ -27,7 +27,7 @@ public class User implements UserDetails {
     private String sisiId;
     private String password;
     private List<String> roles;
-    private Date createdAt;
+    private Date createdAt; 
     private Date updatedAt;
 
     @Override
@@ -61,4 +61,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-} 
+}

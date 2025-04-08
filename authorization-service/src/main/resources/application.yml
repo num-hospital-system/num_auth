@@ -9,12 +9,14 @@ spring:
   cloud:
     compatibility-verifier:
       enabled: false
+  # data:
+  #   mongodb:
+  #     host: localhost
+  #     port: 27017
+  #     database: authorization_service_db
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      database: authorization_service_db
-
+      uri: mongodb+srv://lhagvabatulzii:Lhagv%401592@authentication.cyi8i.mongodb.net/authorization_service_db?retryWrites=true&w=majority&appName=Authentication&ssl=true&tls=true&authSource=admin&maxPoolSize=50&minPoolSize=5
 eureka:
   client:
     enabled: false
