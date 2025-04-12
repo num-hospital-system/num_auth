@@ -25,8 +25,8 @@ public class UserDetailService {
         return userDetailRepository.save(userDetail);
     }
     
-    public Optional<UserDetail> getUserDetailByAuthUserId(String authUserId) {
-        return userDetailRepository.findByAuthUserId(authUserId);
+    public Optional<UserDetail> getUserDetailBySisiId(String sisiId) {
+        return userDetailRepository.findBySisiId(sisiId);
     }
     
     public Optional<UserDetail> getUserDetailByRegisterNumber(String registerNumber) {

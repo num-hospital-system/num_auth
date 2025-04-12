@@ -7,13 +7,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/user-details")
+@RequestMapping("/user-details")
 @RequiredArgsConstructor
 public class UserDetailController {
 
@@ -24,7 +25,7 @@ public class UserDetailController {
         try {
             // DTO-г модель рүү хөрвүүлэх
             UserDetail userDetail = UserDetail.builder()
-                    .authUserId(userDetailDto.getAuthUserId())
+                    .sisiId(userDetailDto.getSisiId())
                     .firstName(userDetailDto.getFirstName())
                     .lastName(userDetailDto.getLastName())
                     .registerNumber(userDetailDto.getRegisterNumber())
@@ -44,9 +45,10 @@ public class UserDetailController {
         }
     }
 
-    @GetMapping("/auth-user/{authUserId}")
-    public ResponseEntity<?> getUserByAuthUserId(@PathVariable String authUserId) {
-        Optional<UserDetail> userDetail = userDetailService.getUserDetailByAuthUserId(authUserId);
+    @GetMapping("/sisi-user/{sisiId}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<?> getUserBySisiId(@PathVariable String sisiId) {
+        Optional<UserDetail> userDetail = userDetailService.getUserDetailBySisiId(sisiId);
         
         if (userDetail.isPresent()) {
             return ResponseEntity.ok(userDetail.get());

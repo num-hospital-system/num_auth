@@ -1,4 +1,4 @@
-package com.example.authservice.filter;
+package com.example.user_detail_register.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

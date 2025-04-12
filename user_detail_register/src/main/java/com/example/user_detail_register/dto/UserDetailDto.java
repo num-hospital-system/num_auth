@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDetailDto {
-    private String authUserId;      // Auth системийн user ID
+    private String sisiId;          // Auth системийн хэрэглэгчийн нэвтрэх нэр
     private String firstName;       // Нэр
     private String lastName;        // Овог
     private String registerNumber;  // Регистр

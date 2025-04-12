@@ -8,8 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface UserDetailRepository extends MongoRepository<UserDetail, String> {
-    Optional<UserDetail> findByAuthUserId(String authUserId);
+    Optional<UserDetail> findBySisiId(String sisiId);
     Optional<UserDetail> findByRegisterNumber(String registerNumber);
-    boolean existsByAuthUserId(String authUserId);
+    boolean existsBySisiId(String sisiId);
     boolean existsByRegisterNumber(String registerNumber);
 } 
