@@ -1,0 +1,24 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: user_detail_register
+  main:
+    allow-circular-references: true
+  cloud:
+    compatibility-verifier:
+      enabled: false
+  # data:
+  #   mongodb:
+  #     host: localhost
+  #     port: 27017
+  #     database: user_detail_register_db
+  data:
+    mongodb:
+      uri: mongodb+srv://lhagvabatulzii:Lhagv%401592@authentication.cyi8i.mongodb.net/user_detail_register_db?retryWrites=true&w=majority&appName=Authentication&ssl=true&tls=true&authSource=admin&maxPoolSize=50&minPoolSize=5
+eureka:
+  client:
+    enabled: false
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/ 

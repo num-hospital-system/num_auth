@@ -26,4 +26,5 @@ eureka:
 
 jwt:
   secret: YW5kMTIzNDU2Nzg5MGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6MTIzNDU2Nzg5MA==
-  expiration: 86400000 # 24 цаг 
+  expiration: 86400000
+

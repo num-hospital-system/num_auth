@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterRequest {
-    
     @NotBlank(message = "Хэрэглэгчийн нэр оруулна уу")
     private String sisiId;
     

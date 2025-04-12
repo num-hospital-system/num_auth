@@ -46,7 +46,7 @@ public class AuthController {
         log.info("Хэрэглэгч нэвтрэх хүсэлт: {}", request.getSisiId());
         return ResponseEntity.ok(userService.login(request));
     }
-    
+
     // role role role role role role role role role role 
     // role role role role role role role role role role 
     // role role role role role role role role role role 
@@ -79,7 +79,6 @@ public class AuthController {
         return ResponseEntity.ok(userService.updateUserRoles(request));
     }
 
-    // --- New Endpoint to get all users --- 
     @GetMapping("/users")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
@@ -87,7 +86,6 @@ public class AuthController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    // Хэрэглэгч устгах endpoint
     @DeleteMapping("/users/{userId}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
@@ -95,5 +93,4 @@ public class AuthController {
         userService.deleteUser(userId);
         return ResponseEntity.ok().build();
     }
-    // --- End of New Endpoint ---
 } 
