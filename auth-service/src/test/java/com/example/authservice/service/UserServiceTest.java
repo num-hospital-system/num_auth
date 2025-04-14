@@ -1,5 +1,3 @@
-package com.example.authservice.service;
-
 import com.example.authservice.dto.AuthRequest;
 import com.example.authservice.dto.AuthResponse;
 import com.example.authservice.model.User;
@@ -52,14 +50,11 @@ class UserServiceLoginTest {
     @Test
     @DisplayName("login() — Амжилттай нэвтрэх")
     void loginSuccess() {
-        // arrange
-        // authenticationManager.authenticate() нь mock тул default нь юу ч хийхгүй
         when(userRepository.findBySisiId("testUser"))
             .thenReturn(Optional.of(testUser));
         when(jwtService.generateToken(testUser, testUser.getRoles()))
             .thenReturn("jwt-token");
 
-        // act
         AuthResponse resp = userService.login(authRequest);
 
         // assert

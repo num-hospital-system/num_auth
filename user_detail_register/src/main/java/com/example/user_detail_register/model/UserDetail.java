@@ -19,16 +19,16 @@ public class UserDetail {
     @Id
     private String id;
     
-    private String sisiId;          // Auth системийн хэрэглэгчийн нэвтрэх нэр
-    private String firstName;       // Нэр
-    private String lastName;        // Овог
-    private String registerNumber;  // Регистр
-    private String gender;          // Хүйс (автоматаар тооцогдоно)
-    private int age;                // Нас (автоматаар тооцогдоно)
-    private int birthYear;          // Төрсөн он (автоматаар тооцогдоно)
-    private String university;      // Аль сургууль
-    private int courseYear;         // Хэддүгээр курс
-    private String phoneNumber;     // Утас
+    private String sisiId;        
+    private String firstName;     
+    private String lastName;      
+    private String registerNumber;
+    private String gender;        
+    private int age;              
+    private int birthYear;        
+    private String university;    
+    private int courseYear;       
+    private String phoneNumber;   
     
     private Date createdAt;
     private Date updatedAt;
