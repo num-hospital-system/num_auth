@@ -28,7 +28,8 @@ public class UserDetailController {
     private final UserDetailService userDetailService;
     private final RestTemplate restTemplate;
     
-    @Value("${auth.service.url:http://localhost:8081}")
+    // @Value("${auth.service.url:http://localhost:8081}")
+    @Value("${auth.service.url:http://52.77.99.18:8081}")
     private String authServiceUrl;
 
     @PostMapping
