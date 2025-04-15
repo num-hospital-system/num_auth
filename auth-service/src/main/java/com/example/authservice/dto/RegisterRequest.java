@@ -16,8 +16,9 @@ public class RegisterRequest {
     @NotBlank(message = "Хэрэглэгчийн нэр оруулна уу")
     private String sisiId;
     
-    @NotBlank(message = "Нууц үг оруулна уу")
     private String password;
     
+    private String phoneNumber;
+    
     private List<String> roles;
-} 
+}

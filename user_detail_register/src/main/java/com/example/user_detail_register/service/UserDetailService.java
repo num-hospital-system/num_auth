@@ -16,7 +16,6 @@ public class UserDetailService {
     private final UserDetailRepository userDetailRepository;
 
     public UserDetail createUserDetail(UserDetail userDetail) {
-        // Регистрээс нас, хүйс бодох
         processRegisterNumberData(userDetail);
         
         userDetail.setCreatedAt(new Date());
@@ -53,9 +52,6 @@ public class UserDetailService {
                     }
                     if (updatedUserDetail.getCourseYear() > 0) {
                         existingUserDetail.setCourseYear(updatedUserDetail.getCourseYear());
-                    }
-                    if (updatedUserDetail.getPhoneNumber() != null) {
-                        existingUserDetail.setPhoneNumber(updatedUserDetail.getPhoneNumber());
                     }
                     
                     existingUserDetail.setUpdatedAt(new Date());

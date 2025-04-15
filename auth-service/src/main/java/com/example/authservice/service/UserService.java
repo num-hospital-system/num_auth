@@ -63,9 +63,13 @@ public class UserService implements UserDetailsService {
             roles.add("ROLE_USER");
         }
 
+        // Автоматаар нууц үг үүсгэх
+        String generatedPassword = generateRandomPassword();
+        
         User user = User.builder()
                 .sisiId(request.getSisiId())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(passwordEncoder.encode(generatedPassword))
+                .phoneNumber(request.getPhoneNumber())
                 .roles(roles)
                 .createdAt(new Date())
                 .updatedAt(new Date())
@@ -74,12 +78,30 @@ public class UserService implements UserDetailsService {
         User savedUser = userRepository.save(user);
         String token = jwtService.generateToken(user, user.getRoles());
 
+        // Хэрэв утасны дугаар байвал SMS-ээр нууц үгийг илгээж болно
+        if (request.getPhoneNumber() != null && !request.getPhoneNumber().isEmpty()) {
+            sendPasswordToUser(request.getPhoneNumber(), generatedPassword);
+        }
+
         return AuthResponse.builder()
                 .id(savedUser.getId())
                 .sisiId(savedUser.getSisiId())
+                .phoneNumber(savedUser.getPhoneNumber())
                 .token(token)
                 .roles(savedUser.getRoles())
                 .build();
+    }
+    
+    private String generateRandomPassword() {
+        // Энгийн нууц үг үүсгэх (6 оронтой тоо)
+        int min = 100000;
+        int max = 999999;
+        return String.valueOf(min + (int)(Math.random() * ((max - min) + 1)));
+    }
+    
+    private void sendPasswordToUser(String phoneNumber, String password) {
+        log.info("Дараах дугаарлуу нууц үг илгээгдлээ: {}, Нууц үг: {}", phoneNumber, password);
+        // TODO: SMS API-тай холбох
     }
 
     public AuthResponse login(AuthRequest request) {
@@ -102,6 +124,7 @@ public class UserService implements UserDetailsService {
         return AuthResponse.builder()
                 .id(user.getId())
                 .sisiId(user.getSisiId())
+                .phoneNumber(user.getPhoneNumber())
                 .token(token)
                 .roles(user.getRoles())
                 .build();
@@ -120,6 +143,7 @@ public class UserService implements UserDetailsService {
         return AuthResponse.builder()
                 .id(savedUser.getId())
                 .sisiId(savedUser.getSisiId())
+                .phoneNumber(savedUser.getPhoneNumber())
                 .token(token)
                 .roles(savedUser.getRoles())
                 .build();
@@ -141,6 +165,7 @@ public class UserService implements UserDetailsService {
             return AuthResponse.builder()
                     .id(savedUser.getId())
                     .sisiId(savedUser.getSisiId())
+                    .phoneNumber(savedUser.getPhoneNumber())
                     .token(token)
                     .roles(savedUser.getRoles())
                     .build();
@@ -149,10 +174,12 @@ public class UserService implements UserDetailsService {
         return AuthResponse.builder()
                 .id(user.getId())
                 .sisiId(user.getSisiId())
+                .phoneNumber(user.getPhoneNumber())
                 .token(jwtService.generateToken(user, user.getRoles()))
                 .roles(user.getRoles())
                 .build();
     }
+    
     public AuthResponse removeUserRole(String sisiId, String roleToRemove) {
         User user = userRepository.findBySisiId(sisiId)
                 .orElseThrow(() -> new UsernameNotFoundException("Хэрэглэгч олдсонгүй: " + sisiId));
@@ -168,6 +195,7 @@ public class UserService implements UserDetailsService {
             return AuthResponse.builder()
                     .id(savedUser.getId())
                     .sisiId(savedUser.getSisiId())
+                    .phoneNumber(savedUser.getPhoneNumber())
                     .token(token)
                     .roles(savedUser.getRoles())
                     .build();
@@ -176,6 +204,7 @@ public class UserService implements UserDetailsService {
         return AuthResponse.builder()
                 .id(user.getId())
                 .sisiId(user.getSisiId())
+                .phoneNumber(user.getPhoneNumber())
                 .token(jwtService.generateToken(user, user.getRoles()))
                 .roles(user.getRoles())
                 .build();
@@ -206,6 +235,10 @@ public class UserService implements UserDetailsService {
         // Хэрэглэгчийг устгах
         userRepository.delete(user);
         log.info("Хэрэглэгч амжилттай устгагдлаа: {}", userId);
+    }
+
+    public boolean existsBySisiId(String sisiId) {
+        return userRepository.existsBySisiId(sisiId);
     }
 
 } 

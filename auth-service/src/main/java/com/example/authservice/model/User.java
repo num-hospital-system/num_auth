@@ -26,6 +26,7 @@ public class User implements UserDetails {
     private String id;
     private String sisiId;
     private String password;
+    private String phoneNumber;
     private List<String> roles;
     private Date createdAt; 
     private Date updatedAt;

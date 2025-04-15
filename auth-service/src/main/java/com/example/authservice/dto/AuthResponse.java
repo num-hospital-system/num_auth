@@ -14,6 +14,7 @@ import java.util.List;
 public class AuthResponse {
     private String id;
     private String sisiId;
+    private String phoneNumber;
     private String token;
     private List<String> roles;
 } 

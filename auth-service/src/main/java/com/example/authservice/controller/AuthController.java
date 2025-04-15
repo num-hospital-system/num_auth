@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 
 @RestController
@@ -28,7 +30,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
-
     private final UserService userService;
 
     @PostMapping("/register")
@@ -92,5 +93,15 @@ public class AuthController {
         log.info("Хэрэглэгч устгах хүсэлт (Админ): {}", userId);
         userService.deleteUser(userId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/check-user")
+    public ResponseEntity<Map<String, Boolean>> checkUserExists(@RequestParam String sisiId) {
+        boolean exists = userService.existsBySisiId(sisiId);
+        
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("exists", exists);
+        
+        return ResponseEntity.ok(response);
     }
 } 

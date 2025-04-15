@@ -16,7 +16,7 @@ public class UserDetailDto {
     private String registerNumber;  // Регистр
     private String university;      // Аль сургууль
     private int courseYear;         // Хэддүгээр курс
-    private String phoneNumber;     // Утас
+    private String phoneNumber;     // Утасны дугаар (ЗөвхөнAuth Service лүү дамжуулахад ашиглана)
     
     // Эдгээр талбарууд регистрээс автоматаар тооцогддог учир өгөгдөл авах шаардлагагүй
     private String gender;          // Хүйс

@@ -15,10 +15,10 @@ import java.util.Date;
 @AllArgsConstructor
 @Document(collection = "user_details")
 public class UserDetail {
-    
+
     @Id
     private String id;
-    
+
     private String sisiId;        
     private String firstName;     
     private String lastName;      
@@ -28,8 +28,7 @@ public class UserDetail {
     private int birthYear;        
     private String university;    
     private int courseYear;       
-    private String phoneNumber;   
-    
+
     private Date createdAt;
     private Date updatedAt;
 } 
