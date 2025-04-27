@@ -21,4 +21,8 @@ public class RegisterRequest {
     private String phoneNumber;
     
     private List<String> roles;
+
+    private String firstName;
+    private String lastName;
+    private String email;
 }
