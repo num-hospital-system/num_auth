@@ -45,7 +45,13 @@ public class AuthController {
             @RequestBody @Valid AuthRequest request
     ) {
         log.info("Хэрэглэгч нэвтрэх хүсэлт: {}", request.getSisiId());
-        return ResponseEntity.ok(userService.login(request));
+        try {
+            log.info("ResponseEntity.ok(userService.login(request));: {}", userService.login(request));
+            return ResponseEntity.ok(userService.login(request));
+        } catch (Exception e) {
+            log.error("Нэвтрэх үед алдаа гарлаа - sisiId: {}", request.getSisiId(), e);
+            throw new RuntimeException("Хэрэглэгчийн нэр эсвэл нууц үг буруу байна", e);
+        }
     }
 
     // role role role role role role role role role role 

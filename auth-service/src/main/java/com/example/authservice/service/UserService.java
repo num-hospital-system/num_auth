@@ -63,12 +63,23 @@ public class UserService implements UserDetailsService {
             roles.add("ROLE_USER");
         }
 
-        // Автоматаар нууц үг үүсгэх
-        String generatedPassword = generateRandomPassword();
+        // Log the received password for debugging
+        log.info("Бүртгэлийн хүсэлт доторх нууц үг: '{}'", request.getPassword());
+
+        String passwordToUse;
+        boolean passwordGenerated = false;
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            passwordToUse = request.getPassword();
+            log.info("Бүртгэлийн хүсэлтээс нууц үг ашиглаж байна: {}", request.getSisiId());
+        } else {
+            passwordToUse = generateRandomPassword();
+            passwordGenerated = true;
+            log.info("Шинэ нууц үг үүсгэж байна: {}", request.getSisiId());
+        }
         
         User user = User.builder()
                 .sisiId(request.getSisiId())
-                .password(passwordEncoder.encode(generatedPassword))
+                .password(passwordEncoder.encode(passwordToUse))
                 .phoneNumber(request.getPhoneNumber())
                 .roles(roles)
                 .createdAt(new Date())
@@ -78,9 +89,9 @@ public class UserService implements UserDetailsService {
         User savedUser = userRepository.save(user);
         String token = jwtService.generateToken(user, user.getRoles());
 
-        // Хэрэв утасны дугаар байвал SMS-ээр нууц үгийг илгээж болно
-        if (request.getPhoneNumber() != null && !request.getPhoneNumber().isEmpty()) {
-            sendPasswordToUser(request.getPhoneNumber(), generatedPassword);
+        // Send SMS only if password was generated and phone number exists
+        if (passwordGenerated && request.getPhoneNumber() != null && !request.getPhoneNumber().isEmpty()) {
+            sendPasswordToUser(request.getPhoneNumber(), passwordToUse);
         }
 
         return AuthResponse.builder()
@@ -93,7 +104,6 @@ public class UserService implements UserDetailsService {
     }
     
     private String generateRandomPassword() {
-        // Энгийн нууц үг үүсгэх (6 оронтой тоо)
         int min = 100000;
         int max = 999999;
         return String.valueOf(min + (int)(Math.random() * ((max - min) + 1)));
@@ -113,6 +123,7 @@ public class UserService implements UserDetailsService {
                     )
             );
         } catch (AuthenticationException e) {
+            log.error("Нэвтрэх үед алдаа гарлаа - sisiId: {}", request.getSisiId(), e);
             throw new RuntimeException("Хэрэглэгчийн нэр эсвэл нууц үг буруу байна", e);
         }
 

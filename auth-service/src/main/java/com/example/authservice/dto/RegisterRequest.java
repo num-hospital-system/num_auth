@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterRequest {
-    @NotBlank(message = "Хэрэглэгчийн нэр оруулна уу")
+    @NotBlank(message = "Хэрэглэгчийн ID оруулна уу")
     private String sisiId;
     
     private String password;
