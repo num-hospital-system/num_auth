@@ -1,3 +1,91 @@
+package com.example.authservice.integration;
+
+import com.example.authservice.model.User;
+import com.example.authservice.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Collections;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+public class UserIntegrationTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @BeforeEach
+    void setUp() {
+        userRepository.deleteAll();
+
+        User adminUser = User.builder()
+                .sisiId("admin")
+                .password(passwordEncoder.encode("admin123"))
+                .roles(Collections.singletonList("ROLE_ADMIN"))
+                .build();
+
+        userRepository.save(adminUser);
+    }
+
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteAll();
+    }
+
+    @Test
+    @DisplayName("Админ хэрэглэгч бүх хэрэглэгчийн жагсаалтыг авна")
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void testAdminCanGetAllUsers() throws Exception {
+        mockMvc.perform(get("/auth/users")
+                        .header("X-User-ID", "admin")
+                        .header("X-User-Roles", "ROLE_ADMIN"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Энгийн хэрэглэгч жагсаалт авах үед хориглоно")
+    @WithMockUser(username = "user", roles = {"USER"})
+    void testNonAdminCannotGetAllUsers() throws Exception {
+        mockMvc.perform(get("/auth/users")
+                        .header("X-User-ID", "user")
+                        .header("X-User-Roles", "ROLE_USER"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Хоосон өгөгдлийн санд хэрэглэгч байхгүй үед хоосон буцаана")
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void testEmptyUserList() throws Exception {
+        userRepository.deleteAll();
+        mockMvc.perform(get("/auth/users")
+                        .header("X-User-ID", "admin")
+                        .header("X-User-Roles", "ROLE_ADMIN"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+    }
+}
+
+
 // // package com.example.authservice.integration;
 
 // // import com.example.authservice.dto.AuthRequest;
