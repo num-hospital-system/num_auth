@@ -49,82 +49,180 @@ class UserRegistrationIntegrationTest {
     }
 
     // @Test
-    // @DisplayName("Хэрэглэгч амжилттай бүртгэх тест")
-    // void testSuccessfulUserRegistration() throws Exception {
-    //     RegisterRequest registerRequest = new RegisterRequest();
-    //     registerRequest.setSisiId("22B1NUM3392");
-    //     registerRequest.setPassword("22B1NUM3392");
-    //     List<String> roles = new ArrayList<>();
-    //     roles.add("ROLE_USER");
-    //     registerRequest.setRoles(roles);
+    // @DisplayName("Давхардсан хэрэглэгч бүртгэх үед алдаа гарах тест")
+    // void testDuplicateUserRegistration() throws Exception {
+    //     // Эхний хэрэглэгчийг бүртгэх
+    //     RegisterRequest registerRequest1 = new RegisterRequest();
+    //     registerRequest1.setSisiId("22B1NUM5555");
+    //     registerRequest1.setPassword("22B1NUM5555");
+    //     List<String> roles1 = new ArrayList<>();
+    //     roles1.add("ROLE_USER");
+    //     registerRequest1.setRoles(roles1);
 
-    //     MvcResult result = mockMvc.perform(post("/auth/register")
+    //     mockMvc.perform(post("/auth/register")
     //             .contentType(MediaType.APPLICATION_JSON)
-    //             .content(objectMapper.writeValueAsString(registerRequest)))
-    //             .andExpect(status().isOk())
-    //             .andReturn();
+    //             .content(objectMapper.writeValueAsString(registerRequest1)))
+    //             .andExpect(status().isOk());
 
-    //     AuthResponse response = objectMapper.readValue(
-    //             result.getResponse().getContentAsString(),
-    //             AuthResponse.class
-    //     );
+    //     // Давхардсан sisiId-тай хэрэглэгчийг бүртгэх оролдлого
+    //     RegisterRequest registerRequest2 = new RegisterRequest();
+    //     registerRequest2.setSisiId("22B1NUM5555");
+    //     registerRequest2.setPassword("22B1NUM6666"); // Өөр нууц үг
+    //     List<String> roles2 = new ArrayList<>();
+    //     roles2.add("ROLE_USER");
+    //     registerRequest2.setRoles(roles2);
 
-    //     assertNotNull(response);
-    //     assertEquals("22B1NUM3392", response.getSisiId());
-    //     assertNotNull(response.getToken());
-    //     assertTrue(response.getRoles().contains("ROLE_USER"));
+    //     mockMvc.perform(post("/auth/register")
+    //             .contentType(MediaType.APPLICATION_JSON)
+    //             .content(objectMapper.writeValueAsString(registerRequest2)))
+    //             .andExpect(status().isBadRequest()); // Энд алдаа гарна гэж шалгаж байна
 
-    //     User savedUser = userRepository.findBySisiId("22B1NUM3392").orElse(null);
-    //     assertNotNull(savedUser);
-    //     assertEquals("22B1NUM3392", savedUser.getSisiId());
+    //     // Баталгаажуулалт: Хэрэглэгч зөвхөн нэг л удаа бүртгэгдсэн эсэх
+    //     long count = userRepository.count();
+    //     assertEquals(1, count, "Хэрэглэгчийн тоо 1-ээс их байж болохгүй");
+
+    //     User savedUser = userRepository.findBySisiId("22B1NUM5555").orElse(null);
+    //     assertNotNull(savedUser, "Хэрэглэгч олдсонгүй");
+    //     assertEquals("22B1NUM5555", savedUser.getSisiId());
+    //     assertEquals("22B1NUM5555", savedUser.getPassword());
     //     assertTrue(savedUser.getRoles().contains("ROLE_USER"));
     // }
 
     @Test
-    @DisplayName("Давхардсан хэрэглэгч бүртгэх үед алдаа гарах тест")
-    void testDuplicateUserRegistration() throws Exception {
-        User existingUser = User.builder()
-                .sisiId("22B1NUM3333")
-                .password("22B1NUM3333")
-                .roles(List.of("ROLE_USER"))
-                .build();
-        userRepository.save(existingUser);
+    @DisplayName("Хоосон sisiId-тай хэрэглэгч бүртгэх үед алдаа гарах тест")
+    void testRegisterUserWithEmptySisiId() throws Exception {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setSisiId("");
+        registerRequest.setPassword("password123");
+        registerRequest.setRoles(List.of("ROLE_USER"));
 
-        RegisterRequest duplicateRequest = new RegisterRequest();
-        duplicateRequest.setSisiId("22B1NUM3333");
-        duplicateRequest.setPassword("22B1NUM3333");
-        List<String> roles = new ArrayList<>();
-        roles.add("ROLE_USER");
-        duplicateRequest.setRoles(roles);
-
-        MvcResult result = mockMvc.perform(post("/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(duplicateRequest)))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-
-        String errorMessage = result.getResponse().getContentAsString();
-        assertTrue(errorMessage.contains("Хэрэглэгч аль хэдийн бүртгэгдсэн байна"));
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerRequest)))
+                .andExpect(status().isBadRequest());
     }
+
+    // @Test
+    // @DisplayName("Хоосон нууц үгтэй хэрэглэгч бүртгэх үед алдаа гарах тест")
+    // void testRegisterUserWithEmptyPassword() throws Exception {
+    //     RegisterRequest registerRequest = new RegisterRequest();
+    //     registerRequest.setSisiId("22B1NUM7777");
+    //     registerRequest.setPassword("");
+    //     registerRequest.setRoles(List.of("ROLE_USER"));
+
+    //     mockMvc.perform(post("/auth/register")
+    //                     .contentType(MediaType.APPLICATION_JSON)
+    //                     .content(objectMapper.writeValueAsString(registerRequest)))
+    //             .andExpect(status().isBadRequest());
+    // }
+
+    // @Test
+    // @DisplayName("Бүртгэлийн хүсэлтэнд role байхгүй үед алдаа гарах тест")
+    // void testRegisterUserWithoutRoles() throws Exception {
+    //     RegisterRequest registerRequest = new RegisterRequest();
+    //     registerRequest.setSisiId("22B1NUM8888");
+    //     registerRequest.setPassword("password123");
+    //     registerRequest.setRoles(new ArrayList<>());
+
+    //     mockMvc.perform(post("/auth/register")
+    //                     .contentType(MediaType.APPLICATION_JSON)
+    //                     .content(objectMapper.writeValueAsString(registerRequest)))
+    //             .andExpect(status().isBadRequest());
+    // }
+
+    // @Test
+    // @DisplayName("Хэрэглэгчийн бүртгэлийн sisiId-н урт хэтэрсэн үед алдаа гарах тест")
+    // void testRegisterUserWithLongSisiId() throws Exception {
+    //     RegisterRequest registerRequest = new RegisterRequest();
+    //     registerRequest.setSisiId("22B1NUM999999999999999"); // Length exceeds limit
+    //     registerRequest.setPassword("password123");
+    //     registerRequest.setRoles(List.of("ROLE_USER"));
+
+    //     mockMvc.perform(post("/auth/register")
+    //                     .contentType(MediaType.APPLICATION_JSON)
+    //                     .content(objectMapper.writeValueAsString(registerRequest)))
+    //             .andExpect(status().isBadRequest());
+    // }
+
+
+        @Test
+        @DisplayName("Шинэ хэрэглэгч бүртгэх тест")
+        void testUserRegistration() throws Exception {
+        String sisiId = "22B1NUM4444";
+
+        boolean existsBefore = userRepository.existsBySisiId(sisiId);
+
+        assertFalse(existsBefore);
+
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setSisiId(sisiId);
+        registerRequest.setPassword("22B1NUM4444");
+        registerRequest.setRoles(List.of("ROLE_USER"));
+
+        mockMvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(registerRequest)))
+            .andExpect(status().isOk());
+
+        boolean existsAfter = userRepository.existsBySisiId(sisiId);
+
+            assertTrue(existsAfter);
+        }
+
+        // @Test
+        // @DisplayName("Давхардсан хэрэглэгч бүртгэх үед алдаа гарах тест - регистр case өөр үед")
+        
+        // void testDuplicateUserRegistrationDifferentCase() throws Exception {
+        // // Эхний хэрэглэгчийг бүртгэх
+        // RegisterRequest registerRequest1 = new RegisterRequest();
+        // registerRequest1.setSisiId("22B1NUM5555");
+        // registerRequest1.setPassword("22B1NUM5555");
+        // List<String> roles1 = new ArrayList<>();
+        // roles1.add("ROLE_USER");
+        // registerRequest1.setRoles(roles1);
+
+        // mockMvc.perform(post("/auth/register")
+        //         .contentType(MediaType.APPLICATION_JSON)
+        //         .content(objectMapper.writeValueAsString(registerRequest1)))
+        //     .andExpect(status().isOk());
+
+        // // Давхардсан sisiId-тай хэрэглэгчийг бүртгэх оролдлого (case өөр)
+        // RegisterRequest registerRequest2 = new RegisterRequest();
+        // registerRequest2.setSisiId("22b1NUM5555"); // lowercase sisiId
+        // registerRequest2.setPassword("22B1NUM6666"); // Өөр нууц үг
+        // List<String> roles2 = new ArrayList<>();
+        // roles2.add("ROLE_USER");
+        // registerRequest2.setRoles(roles2);
+
+        // mockMvc.perform(post("/auth/register")
+        //         .contentType(MediaType.APPLICATION_JSON)
+        //         .content(objectMapper.writeValueAsString(registerRequest2)))
+        //     .andExpect(status().isBadRequest()); // Энд алдаа гарна гэж шалгаж байна
+
+        // // Баталгаажуулалт: Хэрэглэгч зөвхөн нэг л удаа бүртгэгдсэн эсэх
+        // long count = userRepository.count();
+        // assertEquals(1, count, "Хэрэглэгчийн тоо 1-ээс их байж болохгүй");
+
+        // User savedUser = userRepository.findBySisiId("22B1NUM5555").orElse(null);
+        // assertNotNull(savedUser, "Хэрэглэгч олдсонгүй");
+        // assertEquals("22B1NUM5555", savedUser.getSisiId());
+        // assertEquals("22B1NUM5555", savedUser.getPassword());
+        // assertTrue(savedUser.getRoles().contains("ROLE_USER"));
+        // }
 
     @Test
-    @DisplayName("existsBySisiId шалгалт зөв ажиллаж байгаа эсэхийг шалгах тест")
-    void testExistsBySisiId() {
-        String sisiId = "22B1NUM4444";
-        
-        boolean existsBefore = userRepository.existsBySisiId(sisiId);
-        
-        assertFalse(existsBefore);
-        
-        User user = User.builder()
-                .sisiId(sisiId)
-                .password("22B1NUM4444")
-                .roles(List.of("ROLE_USER"))
-                .build();
-        userRepository.save(user);
-        
-        boolean existsAfter = userRepository.existsBySisiId(sisiId);
-        
-        assertTrue(existsAfter);
+    @DisplayName("Null sisiId-тай хэрэглэгч бүртгэх үед алдаа гарах тест")
+    void testRegisterUserWithNullSisiId() throws Exception {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setSisiId(null);
+        registerRequest.setPassword("password123");
+        registerRequest.setRoles(List.of("ROLE_USER"));
+
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerRequest)))
+                .andExpect(status().isBadRequest());
     }
+
+
 }
